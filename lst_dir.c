@@ -91,7 +91,7 @@ void	print_dir_elem_stat(char *path)
 	{
 		printf("\tName			: %s\n", path);
 		printf("\tMode			: %s\n", ft_itoa_base(s.st_mode, 2));
-		printf("\tSize			: %lu octets\n", s.st_size);
+		printf("\tSize			: %lld octets\n", s.st_size);
 		printf("\tLast modification date	: %s", ctime((time_t*)&s.st_mtimespec));
 		if ((s.st_mode & S_IFMT) == S_IFDIR)
 			printf("\tType:		Directory\n");

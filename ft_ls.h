@@ -25,4 +25,11 @@
 
 #include <stdio.h>////////////////////////////////////////////////////////////////////////
 
+typedef struct  s_ftls
+{
+    /*--- flags ---*/
+    /*--- directories paths for recursive calling ---*/
+    /*--- think, what else ---*/
+}               t_ftls;
+
 #endif
