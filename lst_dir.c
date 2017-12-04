@@ -6,7 +6,7 @@
 /*   By: dmaznyts <dmaznyts@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 16:17:06 by dmaznyts          #+#    #+#             */
-/*   Updated: 2017/12/01 18:56:43 by dmaznyts         ###   ########.fr       */
+/*   Updated: 2017/12/04 13:52:19 by dmaznyts         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,55 @@
 **     #define S_IXUSR 0000100  execute/search permission, owner
 */
 
+/*
+**	struct passwd {
+**		char    *pw_name;       user name
+**		char    *pw_passwd;     encrypted password
+**		uid_t   pw_uid;         user uid
+**		gid_t   pw_gid;         user gid
+**		time_t  pw_change;      password change time
+**		char    *pw_class;      user access class
+**		char    *pw_gecos;      Honeywell login info
+**		char    *pw_dir;        home directory
+**		char    *pw_shell;      default shell
+**		time_t  pw_expire;      account expiration
+**		int     pw_fields;      internal: fields filled in
+**	};
+*/
+
+/*
+**	struct group {
+**		char    *gr_name;       group name
+**		char    *gr_passwd;     group password
+**		gid_t   gr_gid;         group id
+**		char    **gr_mem;       group members
+**	};
+*/
+
 void	print_dir_elem_stat(char *path)
 {
 	struct stat		s;
 	int				exec_code;
+	struct passwd	*p;
+	struct group	*g;
 
-	printf("%d\n", exec_code = lstat(path, &s));
+	printf("[%d | %s]\n", exec_code = lstat(path, &s), path);
 	//check dir /*(mode & S_IFMT) == S_IFDIR*/
 	if (exec_code != -1)
 	{
-		printf("\tName:		%s\n", path);
-		printf("\tMode:		%s\n", ft_itoa_base(s.st_mode, 2));
+		printf("\tName			: %s\n", path);
+		printf("\tMode			: %s\n", ft_itoa_base(s.st_mode, 2));
+		printf("\tSize			: %lu octets\n", s.st_size);
+		printf("\tLast modification date	: %s", ctime((time_t*)&s.st_mtimespec));
+		if ((s.st_mode & S_IFMT) == S_IFDIR)
+			printf("\tType:		Directory\n");
+		else if ((s.st_mode & S_IFMT) == S_IFREG)
+			printf("\tType			: File\n");
+		p = getpwuid(s.st_uid);
+		printf("\tOwner			: %s\n", p->pw_name);
+		g = getgrgid(s.st_gid);
+		printf("\tGroup			: %s\n", g->gr_name);
+		printf("\tNumber of hard-links	: %u\n", s.st_nlink);
 	}
 }
 
@@ -82,18 +120,26 @@ void	print_dir_content(char *dir)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
+	char			*path;
 
 	dirp = opendir(dir);
 	if (dirp == NULL)
 	{
-		printf("No such directory\n");
+		/*--- открыть папку . и попытаться найти там файл, под названием $(dir) ---*/
+		/*--- Если такого нет - писать ошибку, которая снизу ---*/
+		printf("ft_ls: %s: No such file or directory\n", dir);
 		return ;
 	}
 	while ((dp = readdir(dirp)) != NULL)
 	{
-		printf("%s\n", dp->d_name);
+		// printf("%s|[%c]\n", dp->d_name, dir[ft_strlen(dir) - 1]);
+		if (dir[ft_strlen(dir) - 1] != '/')
+			path = ft_strjoin(dir, "/");
+		else
+			path = ft_strdup(dir);
+		// printf("%s\n", path);
 		if (dp->d_name[0] != '.')
-			print_dir_elem_stat(dp->d_name);
+			print_dir_elem_stat(ft_strjoin(path, dp->d_name));
 	}
 	closedir(dirp);
 }
