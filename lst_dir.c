@@ -125,8 +125,15 @@ void	print_dir_content(char *dir)
 	dirp = opendir(dir);
 	if (dirp == NULL)
 	{
-		/*--- открыть папку . и попытаться найти там файл, под названием $(dir) ---*/
-		/*--- Если такого нет - писать ошибку, которая снизу ---*/
+		dirp = opendir(".");
+		while ((dp = readdir(dirp)) != NULL)
+		{
+			if (ft_strequ(dp->d_name, dir))
+			{
+				print_dir_elem_stat(ft_strjoin("./", dir));
+				return ;
+			}
+		}
 		printf("ft_ls: %s: No such file or directory\n", dir);
 		return ;
 	}
