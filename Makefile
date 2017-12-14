@@ -33,7 +33,7 @@ LIB = libft/ft_atoi.o libft/ft_bzero.o libft/ft_isalnum.o libft/ft_isalpha.o\
 	  libft/ft_tolower.o libft/ft_toupper.o libft/get_next_line.o\
 	  libft/ft_itoa_base.o
 
-OBJ = main.o
+OBJ = main.o lst_dir.o
 
 all: $(NAME)
 

@@ -177,12 +177,3 @@ void	print_dir_content(char *dir)
 	}
 	closedir(dirp);
 }
-
-int		main(int ac, char **av)
-{
-	if (ac == 2)
-		print_dir_content(av[1]);
-	else
-		print_dir_content(".");
-	return (0);
-}
